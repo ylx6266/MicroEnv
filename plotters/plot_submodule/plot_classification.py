@@ -4,14 +4,11 @@ import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import linkage, dendrogram
 from sklearn.preprocessing import StandardScaler
 
-# 1. 读取CSV文件
 df = pd.read_csv('merged_region_classification.csv')
 
-# 2. 计算每个region_id_me中各个cell_type的占比
 count_matrix = pd.crosstab(df['region_id_me'], df['super_class'])
 proportion_matrix = count_matrix.div(count_matrix.sum(axis=1), axis=0)
 
-# 3. 提供的region_id_me的顺序
 ordered_region_ids = [
 234, 332, 297, 299, 287, 401, 291, 289, 290, 293, 284, 288, 295, 298, 258, 285, 286, 292, 310, 321, 386, 
 137, 170, 185, 20, 296, 231, 236, 51, 50, 54, 197, 300, 85, 198, 77, 256, 259, 78, 72, 73, 257, 135, 340, 
@@ -35,15 +32,11 @@ ordered_region_ids = [
 
 ]
 
-
-# 4. 确保所有的region_id_me都存在于proportion_matrix的索引中
 missing_region_ids = [region_id for region_id in ordered_region_ids if region_id not in proportion_matrix.index]
 
-# 5. 为缺失的region_id_me添加新行，所有值设为0
 for region_id in missing_region_ids:
     proportion_matrix.loc[region_id] = [0] * proportion_matrix.shape[1]
 
-# 6. 按照给定顺序重新排序
 proportion_matrix = proportion_matrix.loc[ordered_region_ids]
 
 
@@ -55,15 +48,12 @@ proportion_matrix = proportion_matrix.loc[ordered_region_ids]
 #ordered_cell_types = [proportion_matrix.columns[i] for i in dendro['leaves']]
 #proportion_matrix = proportion_matrix[ordered_cell_types]
 
-# 7. 绘制热图并保存为图片
 plt.figure(figsize=(10, 8))
 sns.heatmap(proportion_matrix, annot=False, cmap='Blues', fmt='.2f', cbar=True)
 
-# 设置标题和标签
 plt.title('Cell Type Proportions for Each Region', fontsize=14)
 plt.xlabel('Cell Type', fontsize=12)
 plt.ylabel('Region ID', fontsize=12)
 
-# 保存为图片
 plt.savefig('cell_type_proportions_heatmap2.png', bbox_inches='tight', dpi=1200)
 

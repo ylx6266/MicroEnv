@@ -18,49 +18,34 @@ grouped_array = grouped_vectors.values
 
 cos_sim_matrix = cosine_similarity(grouped_array)
 
-# 进行层次聚类
 linkage_matrix = linkage(cos_sim_matrix, method='ward')
-
-# 根据聚类结果为热图排序
 dendro = dendrogram(linkage_matrix, no_plot=True)
-order = dendro['leaves']  # 获取聚类后的排序
-
-# 对余弦相似度矩阵进行排序
+order = dendro['leaves']  
 sorted_cos_sim_matrix = cos_sim_matrix[order, :][:, order]
 
-# 获取排序后的区域ID
 sorted_region_ids = np.array(grouped.index)[order]
 
-# 生成白到红的渐变色
 colors = sns.color_palette("Reds", as_cmap=True)
 
-# 创建一个gridspec布局，设置两列：一列用于绘制热图，另一列用于绘制树状图
 fig = plt.figure(figsize=(16, 12))
 gs = fig.add_gridspec(1, 2, width_ratios=[0.1, 0.9])  # Make dendrogram column smaller
 
-# 画出聚类树状图
 ax_dendro = fig.add_subplot(gs[0, 0])
 dendrogram(linkage_matrix, ax=ax_dendro, orientation='left', labels=sorted_region_ids)
-ax_dendro.set_xticks([])  # 隐藏 x 轴刻度
-ax_dendro.set_yticks([])  # 隐藏 y 轴刻度
+ax_dendro.set_xticks([])  
+ax_dendro.set_yticks([]) 
 ax_dendro.invert_yaxis()  # Flip the y-axis vertically
 
-# 画出热图
 ax_heatmap = fig.add_subplot(gs[0, 1])
 sns.heatmap(sorted_cos_sim_matrix, cmap=colors, annot=False, xticklabels=sorted_region_ids, yticklabels=sorted_region_ids, ax=ax_heatmap, cbar=True)
 
 
-# 隐藏热图的 x 和 y 轴刻度标签
 ax_heatmap.set_xticks([])  
 ax_heatmap.set_yticks([])
 
-# 添加标题
 # ax_heatmap.set_title('Cosine Similarity Heatmap of Average Vectors by Region (Clustering)', fontsize=16)
-
-# 调整布局，使两个图形紧凑而不重叠
 fig.tight_layout()
 
-# 保存热图图像
 plt.savefig('cosine_similarity_heatmap_with_cluster_dendrogram_flipped.png', dpi=1200, bbox_inches='tight')  
 plt.close()
 
