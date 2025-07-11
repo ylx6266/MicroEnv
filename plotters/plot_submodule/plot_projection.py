@@ -52,8 +52,6 @@ plt.close()
 
 #######################################################################################################
 
-
-# 保存绘制热图所用的直接数据到 CSV 文件
 heatmap_data = pd.DataFrame(sorted_cos_sim_matrix, index=sorted_region_ids, columns=sorted_region_ids)
 heatmap_data.to_csv('heatmap_data.csv', index=True, header=True)  # Save cosine similarity matrix as CSV
 
